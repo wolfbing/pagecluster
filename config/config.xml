@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Config>
+    <Content>
+        <NestThreshold>0.8</NestThreshold>
+        <PageSimilarityThreshold>0.7</PageSimilarityThreshold>
+    </Content>
+    <Vision>
+        <Threshold>0.5</Threshold>
+    </Vision>
+</Config>
