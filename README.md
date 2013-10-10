@@ -33,7 +33,7 @@ app.cluster();
 * Config>Vision>Threshold: 基于vision-based方法进行聚类时，当页面间vison相似度小于这个值聚类将停止。
 
 配置文件：
-<pre>
+```lang=xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Config>
     <Content>
@@ -44,4 +44,4 @@ app.cluster();
         <Threshold>0.5</Threshold>
     </Vision>
 </Config>
-</pre>
+```
