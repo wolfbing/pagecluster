@@ -1,5 +1,14 @@
 package com.datamining.cluster.nesttree;
 
+/**
+ * @author Bing Liu
+ * 
+ * @version 1.0
+ * 
+ * <br>created on 2013-11-12
+ * <br>last modified on 2013-11-12 by Bing Liu
+ */
+
 import java.io.File;
 import java.io.IOException;
 
@@ -22,17 +31,27 @@ import com.datamining.sde.basictype.TagTree;
 import com.datamining.sde.tagtreebuilder.DOMParserTagTreeBuilder;
 import com.datamining.sde.tagtreebuilder.TagTreeBuilder;
 
+/**
+ * 基于视觉的页面相似度比较
+ *
+ */
 public class VisionComparer implements Comparer {
 	
-	private double threshold;
+	private double threshold; // 相似度阈值, 这个阈值貌似已经用不到了
 	
+	/**
+	 * 默认构造函数
+	 */
 	public VisionComparer()
 	{
 		threshold = 0.6;
 		loadConfig();
 	}
 	
-	public void loadConfig() 
+	/**
+	 * 载入配置文件
+	 */
+	private void loadConfig() 
 	{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true); // never forget this!
@@ -63,7 +82,12 @@ public class VisionComparer implements Comparer {
         
 	}
 	
-
+	/**
+	 * 计算页面相似度
+	 * @param p1 - 页面之一
+	 * @param p2 - 页面之一
+	 * @return - 页面相似度得分
+	 */
 	public double getSimilarityScore(Page p1, Page p2) {
 		// TODO Auto-generated method stub
 		File f1 = p1.getSiteFile();
@@ -71,6 +95,12 @@ public class VisionComparer implements Comparer {
 		return getSimilarityScore(f1, f2);
 	}
 	
+	/**
+	 * 载入用于比较的文件并计算相似度
+	 * @param f1 - 文件之一
+	 * @param f2 - 文件之一
+	 * @return - 相似度得分
+	 */
 	public double getSimilarityScore(File f1, File f2)
 	{
 		VisionVector v1 = new VectorCreator().createVectorFromFile(f1);

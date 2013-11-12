@@ -1,8 +1,12 @@
 package com.datamining.cluster.nesttree;
 
+/**
+ * 类别比较类
+ *
+ */
 public class CategoryComparer{
 	
-	private Comparer comparer;
+	private Comparer comparer; // 页面相似度比较工具
 	
 	public CategoryComparer()
 	{

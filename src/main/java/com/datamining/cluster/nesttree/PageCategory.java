@@ -5,14 +5,17 @@ import java.util.List;
 
 import com.datamining.sde.basictype.TagTree;
 
-
+/**
+ * 页面类别类
+ *
+ */
 public class PageCategory {
 	
-	private List<Page> siteList;
+	private List<Page> siteList; // 该类别下所所包含的页面
 	
-	private int classId;
+	private int classId; // 类别的id
 	
-	private Comparer comparer;
+	private Comparer comparer; // 页面相似度比较工具
 	
 	
 	public PageCategory()
@@ -76,6 +79,11 @@ public class PageCategory {
 		return classId;
 	}
 	
+	/**
+	 * 计算与其他页面分类的相似度
+	 * @param siteClass - 用于比较的页面类别
+	 * @return - 相似度得分
+	 */
 	public double closeShip(PageCategory siteClass)
 	{
 		double sum = 0.0;
@@ -91,13 +99,5 @@ public class PageCategory {
 	}
 	
 	
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

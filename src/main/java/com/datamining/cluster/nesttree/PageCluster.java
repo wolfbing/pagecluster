@@ -20,18 +20,22 @@ public class PageCluster {
 	
 	private double similarityThreshold;
 	
-	private List<PageCategory> siteClasses;
-	private Map<Integer,PageCategory> id2class;
+	private List<PageCategory> siteClasses; // 页面类别
+	private Map<Integer,PageCategory> id2class; // id对应类别
 	
-	private CategoryComparer comparer;
+	private CategoryComparer comparer; //页面比较工具
 	
-	private double nearestScore;
+	private double nearestScore; // 相似度最高的类别对的相似度得分
 	
-	private boolean goon;
+	private boolean goon; // 是否继续进行聚类
 	
-	private Map<SiteClassPair, Double>  closeShipTable;
+	private Map<SiteClassPair, Double>  closeShipTable; // 页面相似度得分表, 记录了任意两个页面的相似度
 	
 	
+	/**
+	 * 页面对
+	 *
+	 */
 	private class SiteClassPair
 	{
 		int c1Id;
@@ -52,10 +56,12 @@ public class PageCluster {
 		{
 			return c2Id;
 		}
-		
-		
+
 	}
 	
+	/**
+	 * 初始化页面距离表, 初始化时每个页面单独作为一个类别, 在后期进行聚类
+	 */
 	public void initCloseShipTable()
 	{
 		for(int loopOut = 0;loopOut<siteClasses.size();++loopOut)
@@ -76,6 +82,9 @@ public class PageCluster {
 		}
 	}
 	
+	/**
+	 * 默认构造函数
+	 */
 	public PageCluster()
 	{
 		siteClasses = new ArrayList<PageCategory>();
@@ -87,11 +96,21 @@ public class PageCluster {
 		comparer = new CategoryComparer(new ContentComparer());
 	}
 	
+	/**
+	 * 设置比较工具
+	 * @param c
+	 */
 	public void setComparer(Comparer c)
 	{
 		comparer.setComparer(c);
 	}
 	
+	/**
+	 * 初始化页面类别, 每个页面将单独作为一个类别
+	 * @param dir - 文件所在目录
+	 * @throws IOException - 读取失败
+	 * @throws SAXException - 解析失败
+	 */
 	public void initSiteClassesFromDir(String dir) throws IOException, SAXException
 	{
 		TagTreeBuilder builder = new DOMParserTagTreeBuilder();
@@ -114,11 +133,13 @@ public class PageCluster {
 		
 	}
 
-	public void addClass(PageCategory c)
-	{
-		siteClasses.add(c);
-	}
-	
+	/**
+	 * 获取页面类别对
+	 * @param cla1Id - 页面之一id
+	 * @param cla2Id - 页面之一id
+	 * @param set - 页面类别对集合
+	 * @return - 页面类别对
+	 */
 	public SiteClassPair getSiteClassPairFromSet(int cla1Id,int cla2Id,Set<SiteClassPair> set)
 	{
 		Iterator ite = set.iterator();
@@ -133,6 +154,11 @@ public class PageCluster {
 		return null;
 	}
 	
+	/**
+	 * 类别合并
+	 * @param cla1Id - 类别之一id
+	 * @param cla2Id - 类别之一id
+	 */
 	public void mergeClass(int cla1Id, int cla2Id)
 	{
 		for(int i=0;i<siteClasses.size();++i)
@@ -165,12 +191,17 @@ public class PageCluster {
 		siteClasses.remove(id2class.get(cla2Id));
 	}
 	
+	
 	public void mergeClass(PageCategory cla1, PageCategory cla2)
 	{
 		cla1.addSites(cla2.getSites());
 		siteClasses.remove(cla2);
 	}
 	
+	/**
+	 * 搜索最相似的类别对
+	 * @return - 类别对
+	 */
 	public SiteClassPair searchClosestClasses()
 	{
 		double maxScore = 0.0;
@@ -183,7 +214,8 @@ public class PageCluster {
 				maxScore = closeShipTable.get(p);
 			}
 		}
-		
+		this.nearestScore = maxScore;
+		// 如果页面的相似度低于阈值, 则停止聚类
 		if(maxScore < similarityThreshold)
 		{
 			goon = false;
@@ -193,6 +225,9 @@ public class PageCluster {
 
 	}
 	
+	/**
+	 * 一次聚类
+	 */
 	public void clusterStepQuick()
 	{
 		SiteClassPair pair = searchClosestClasses();
@@ -206,37 +241,41 @@ public class PageCluster {
 	}
 	
 	
-	public void clusterStep()
-	{
-		PageCategory c1 = null;
-		PageCategory c2 = null;
-		double closeScore = 0.0;
-		for(int loopOut = 0;loopOut<siteClasses.size();++loopOut)
-		{
-			for(int loopIn = loopOut+1;loopIn<siteClasses.size();++loopIn)
-			{
-				double score = siteClasses.get(loopOut).closeShip(siteClasses.get(loopIn));
-				if(score>closeScore)
-				{
-					closeScore = score;
-					c1 = siteClasses.get(loopOut);
-					c2 = siteClasses.get(loopIn);
-				}
-			}
-		}
-		if(c1!=null && c2!=null && closeScore>= similarityThreshold)
-		{
-			mergeClass(c1,c2);
-			nearestScore = closeScore;
-			
-		}
-		if(closeScore < similarityThreshold)
-		{
-			goon = false;
-		}
-		System.out.println(nearestScore);
-	}
+//	public void clusterStep()
+//	{
+//		PageCategory c1 = null;
+//		PageCategory c2 = null;
+//		double closeScore = 0.0;
+//		for(int loopOut = 0;loopOut<siteClasses.size();++loopOut)
+//		{
+//			for(int loopIn = loopOut+1;loopIn<siteClasses.size();++loopIn)
+//			{
+//				double score = siteClasses.get(loopOut).closeShip(siteClasses.get(loopIn));
+//				if(score>closeScore)
+//				{
+//					closeScore = score;
+//					c1 = siteClasses.get(loopOut);
+//					c2 = siteClasses.get(loopIn);
+//				}
+//			}
+//		}
+//		if(c1!=null && c2!=null && closeScore>= similarityThreshold)
+//		{
+//			mergeClass(c1,c2);
+//			nearestScore = closeScore;
+//		}
+//		
+//		if(closeScore < similarityThreshold)
+//		{
+//			goon = false;
+//		}
+//		
+//		System.out.println(nearestScore);
+//	}
 	
+	/**
+	 * 聚类, 直到最大相似度低于阈值停止
+	 */
 	public void clusterQuick()
 	{
 		while(goon)
@@ -250,20 +289,24 @@ public class PageCluster {
 		}
 	}
 	
-	public void cluster()
-	{
-		do
-		{
-			if(siteClasses.size()<2)
-			{
-				goon = false;
-				break;
-			}
-			clusterStep();
-			
-		}while(goon );
-	}
+//	public void cluster()
+//	{
+//		do
+//		{
+//			if(siteClasses.size()<2)
+//			{
+//				goon = false;
+//				break;
+//			}
+//			clusterStep();
+//			
+//		}while(goon );
+//	}
 	
+	/**
+	 * 保存分类的结果
+	 * @param outDir - 输出目录
+	 */
 	public void save(String outDir)
 	{
 		File saveDirFile = new File(outDir);

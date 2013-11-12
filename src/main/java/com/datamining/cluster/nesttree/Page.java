@@ -4,10 +4,14 @@ import java.io.File;
 
 import com.datamining.sde.basictype.TagTree;
 
+/**
+ * 页面类, 包含源文件和解析出来的tagTree
+ *
+ */
 public class Page {
 	
-	private TagTree siteTree;
-	private File siteFile;
+	private TagTree siteTree; // 页面的tagTree
+	private File siteFile; // 源文件
 	
 	public Page(TagTree tree, File f)
 	{
@@ -26,12 +30,5 @@ public class Page {
 	}
 	
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

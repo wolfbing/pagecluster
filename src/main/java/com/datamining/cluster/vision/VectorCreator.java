@@ -1,5 +1,16 @@
 package com.datamining.cluster.vision;
 
+/**
+ * 
+ * @author  Bing Liu
+ * 
+ * @version  1.0
+ * 
+ * <br>created on  2013-11-12
+ * <br>last modified on 2013-11-12 by Bing Liu
+ * 
+ */
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,17 +27,34 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * 
+ * <br>向量生成器类
+ * <br>用于从html中解析视觉向量
+ *
+ */
 public class VectorCreator {
 	
-	
-	public Document loadDomFromPath(String path)
+	/**
+	 * 从路径中读取文件并生成dom树
+	 * @param path - 文件路径
+	 * @return - dom树, 如果载入并生成成功
+	 * 		<br> - null, otherwise
+	 */
+	private Document loadDomFromPath(String path)
 	{
 		File f = new File(path);
 		return loadDomFromFile(f);
 		
 	}
 	
-	public Document loadDomFromFile(File f)
+	/**
+	 * 载入html文件生成dom树
+	 * @param f - File类型, 用于解析的文件
+	 * @return - dom树, Document类型, 如果载入成功
+	 * 		<br>- null, otherwise
+	 */
+	private Document loadDomFromFile(File f)
 	{
 		DOMParser parser = new DOMParser();
 		BufferedReader in;
@@ -48,12 +76,22 @@ public class VectorCreator {
 		return null;
 	}
 	
-	public List<Node> getNodesFromDoc(Document doc)
+	/**
+	 * 从dom树中获取所有节点
+	 * @param doc - dom树
+	 * @return - 所有节点列表
+	 */
+	private List<Node> getNodesFromDoc(Document doc)
 	{
 		return getDescendant(doc.getChildNodes());	
 	}
 	
-	public List<Node> getDescendant(NodeList nl)
+	/**
+	 * 获取一组节点的所有后代
+	 * @param nl - 节点列表
+	 * @return - 所有的后代节点列表
+	 */
+	private List<Node> getDescendant(NodeList nl)
 	{
 		List<Node> nodeList = new ArrayList<Node>();
 		for (int i=0; i<nl.getLength();++i)
@@ -63,7 +101,12 @@ public class VectorCreator {
 		return nodeList;
 	}
 	
-	public List<Node> getDescendant(Node root)
+	/**
+	 * 获取一个节点的所有后代
+	 * @param root - 节点
+	 * @return - 后代节点列表
+	 */
+	private List<Node> getDescendant(Node root)
 	{
 		List<Node> nodes = new ArrayList<Node>();
 		nodes.add(root);
@@ -80,7 +123,12 @@ public class VectorCreator {
 		return nodes;
 	}
 	
-	public VisionVector createVectorFromNodeList(List<Node> nl)
+	/**
+	 * 解析节点列表生成视觉向量
+	 * @param nl - 节点列表
+	 * @return - 视觉向量
+	 */
+	private VisionVector createVectorFromNodeList(List<Node> nl)
 	{
 		VisionVector vector = new VisionVector();
 		for (Node node: nl)
@@ -97,15 +145,13 @@ public class VectorCreator {
 		}
 		return vector;
 	}
+
 	
-	public String extractClass()
-	{
-		return null;
-	}
-	
-	
-	
-	
+	/**
+	 * 从路径中读取文件并解析成视觉向量
+	 * @param path - 路径
+	 * @return - 视觉向量
+	 */
 	public VisionVector createVectorFromPath(String path)
 	{
 		Document doc = this.loadDomFromPath(path);
@@ -114,6 +160,11 @@ public class VectorCreator {
 		return createVectorFromNodeList(nl);
 	}
 	
+	/**
+	 * 从文件中解析视觉向量
+	 * @param f - 文件
+	 * @return - 视觉向量
+	 */
 	public VisionVector createVectorFromFile(File f)
 	{
 		Document doc = this.loadDomFromFile(f);
